@@ -1,0 +1,11 @@
+{
+    "IsEncrypted": false,
+    "ScalingPolicy": {
+      "MinScale": 2,
+      "MaxScale": 8,
+      "ScaleOutStep": 1,
+      "ScaleInStep": 3
+    },
+    "ArmUri": "https://management.azure.com:443"
+  }
+  
