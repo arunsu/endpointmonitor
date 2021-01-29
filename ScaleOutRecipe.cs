@@ -7,8 +7,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
 {
@@ -19,12 +17,12 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest recipeRequest,
             ILogger log, ExecutionContext context)
         {
-            log.LogInformation("Scale out recipe function processed a request.");
+            log.LogInformation("Scale out recipe function is processing a request.");
 
             string responseMessage = "Scale out recipe function started but did not scale instances.";
             try
             {
-                var config = ConfigurationHelper.GetConfiguration(log);
+                var config = ConfigurationHelper.GetConfiguration(context.FunctionAppDirectory, log);
 
                 var alert = await ValidateHelper.ValidateRequest(recipeRequest, log);
                 
@@ -40,6 +38,7 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
                 if (invokeScaleOut)
                 {              
                     var scaleOutStep = Convert.ToInt32(config["ScalingPolicy:ScaleOutStep"]);
+                    var currentInstances = onlineDeployment.properties.scaleSettings.instanceCount;
                     onlineDeployment.properties.scaleSettings.instanceCount = currentInstances + scaleOutStep;
 
                     await OnlineEndpointsHelper.UpdateDeploymentResource(config, targetResourceId, onlineDeployment, log);

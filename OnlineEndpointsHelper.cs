@@ -64,7 +64,7 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
 
         private static string GetResourceUri(IConfigurationRoot config, string targetResourceId)
         {
-            var armUri = config["ArmUri"]
+            var armUri = config["ArmUri"];
 
             if (string.IsNullOrWhiteSpace(armUri))
             {

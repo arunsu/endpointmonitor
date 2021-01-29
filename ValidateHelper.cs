@@ -23,6 +23,7 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
             }
 
             string requestBody = await new StreamReader(recipeRequest.Body).ReadToEndAsync();
+            requestBody = requestBody.Replace('\u200b', ' ');
             log.LogInformation(requestBody);
             var alert = JsonConvert.DeserializeObject<CommonAlertSchema>(requestBody);
 

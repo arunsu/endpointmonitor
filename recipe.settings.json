@@ -6,6 +6,7 @@
       "ScaleOutStep": 1,
       "ScaleInStep": 3
     },
-    "ArmUri": "https://management.azure.com:443"
+    "ArmUri": "https://centraluseuap.management.azure.com",
+    "AuthToken": ""
   }
   

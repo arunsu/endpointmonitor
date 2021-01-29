@@ -1,8 +1,9 @@
 using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.WebJobs;
+    using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,12 +17,12 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest recipeRequest,
             ILogger log, ExecutionContext context)
         {
-            log.LogInformation("Scale in recipe function processed a request.");
+            log.LogInformation("Scale in recipe function is processing a request.");
 
             string responseMessage = "Scale in recipe function started but did not scale down instances.";
             try
             {
-                var config = ConfigurationHelper.GetConfiguration(log);
+                var config = ConfigurationHelper.GetConfiguration(context.FunctionAppDirectory, log);
 
                 var alert = await ValidateHelper.ValidateRequest(recipeRequest, log);
                 
@@ -37,6 +38,7 @@ namespace Microsoft.AzureML.OnlineEndpoints.RecipeFunction
                 if (invokeScaleIn)
                 {              
                     var scaleInStep = Convert.ToInt32(config["ScalingPolicy:ScaleInStep"]);
+                    var currentInstances = onlineDeployment.properties.scaleSettings.instanceCount;
                     onlineDeployment.properties.scaleSettings.instanceCount = currentInstances - scaleInStep;
 
                     await OnlineEndpointsHelper.UpdateDeploymentResource(config, targetResourceId, onlineDeployment, log);
